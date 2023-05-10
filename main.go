@@ -1,7 +1,30 @@
 package main
 
-import "fmt"
+import (
+	"github.com/chicho69-cesar/dio-planner-back/routes"
+	"github.com/chicho69-cesar/dio-planner-back/storage"
+	"github.com/go-playground/validator/v10"
+	"github.com/joho/godotenv"
+	"github.com/kataras/iris/v12"
+)
 
 func main() {
-	fmt.Println("Dio Planner Back-End")
+	godotenv.Load()
+	storage.InitializeDB()
+
+	app := iris.Default()
+	app.Validator = validator.New()
+
+	test := app.Party("/test")
+	{
+		test.Get("/", routes.HelloWorld)
+	}
+
+	// user := app.Party("/user") 
+	{
+		/* user.Post("/register", routes.Register)
+		user.Post("/login", routes.Login) */
+	}
+
+	app.Listen(":4000")
 }
