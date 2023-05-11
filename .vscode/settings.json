@@ -6,7 +6,9 @@
 		"godotenv",
 		"gorm",
 		"joho",
+		"jwks",
 		"kataras",
+		"keyfunc",
 		"postgres"
 	]
 }
