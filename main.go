@@ -20,10 +20,9 @@ func main() {
 		test.Get("/", routes.HelloWorld)
 	}
 
-	// user := app.Party("/user") 
+	user := app.Party("/user") 
 	{
-		/* user.Post("/register", routes.Register)
-		user.Post("/login", routes.Login) */
+		user.Post("/register", routes.Register)
 	}
 
 	app.Listen(":4000")
