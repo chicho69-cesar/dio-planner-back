@@ -2,17 +2,17 @@ package routes
 
 import (
 	"encoding/json"
-	// "fmt"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
 
-	// "github.com/MicahParks/keyfunc"
+	"github.com/MicahParks/keyfunc"
 	"github.com/chicho69-cesar/dio-planner-back/models"
 	"github.com/chicho69-cesar/dio-planner-back/storage"
 	"github.com/chicho69-cesar/dio-planner-back/utils"
-	// "github.com/golang-jwt/jwt/v4"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/kataras/iris/v12"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -261,6 +261,89 @@ func GoogleLoginOrSignUp(ctx iris.Context) {
 
 		utils.CreateEmailAlreadyRegistered(ctx)
 		
+		return
+	}
+}
+
+func AppleLoginOrSignUp(ctx iris.Context) {
+	var userInput AppleUserInput
+	err := ctx.ReadJSON(&userInput)
+	if err != nil {
+		utils.HandleValidationErrors(err, ctx)
+		return
+	}
+
+	res, httpErr := http.Get("https://appleid.apple.com/auth/keys")
+	if httpErr != nil {
+		utils.CreateInternalServerError(ctx)
+		return
+	}
+
+	defer res.Body.Close()
+
+	body, bodyErr := ioutil.ReadAll(res.Body)
+	if bodyErr != nil {
+		utils.CreateInternalServerError(ctx)
+		return
+	}
+
+	jwks, jwksErr := keyfunc.NewJSON(body)
+	token, tokenErr := jwt.Parse(userInput.IdentityToken, jwks.Keyfunc)
+
+	if jwksErr != nil || tokenErr != nil {
+		utils.CreateInternalServerError(ctx)
+		return
+	}
+
+	if !token.Valid {
+		utils.CreateError(iris.StatusUnauthorized, "Unauthorized", "Invalid user token.", ctx)
+		return
+	}
+
+	email := fmt.Sprint(token.Claims.(jwt.MapClaims)["email"])
+	if email != "" {
+		var user models.User
+		userExists, userExistsErr := getAndHandleUserExists(&user, email)
+
+		if userExistsErr != nil {
+			utils.CreateInternalServerError(ctx)
+			return
+		}
+
+		if userExists == false {
+			user = models.User{
+				Name: "", 
+				Email: email, 
+				SocialLogin: true, 
+				SocialProvider: "Apple",
+			}
+			storage.DB.Create(&user)
+
+			ctx.JSON(iris.Map{
+				"ID":              user.ID,
+				"name":       		 user.Name,
+				"email":           user.Email,
+				"description":     user.Description,
+				"picture":         user.Picture,
+			})
+			
+			return
+		}
+
+		if user.SocialLogin == true && user.SocialProvider == "Apple" {
+			ctx.JSON(iris.Map{
+				"ID":              user.ID,
+				"name":       		 user.Name,
+				"email":           user.Email,
+				"description":     user.Description,
+				"picture":         user.Picture,
+			})
+
+			return
+		}
+
+		utils.CreateEmailAlreadyRegistered(ctx)
+
 		return
 	}
 }
