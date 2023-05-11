@@ -23,6 +23,7 @@ func main() {
 	user := app.Party("/user") 
 	{
 		user.Post("/register", routes.Register)
+		user.Post("/login", routes.Login)
 	}
 
 	app.Listen(":4000")

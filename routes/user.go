@@ -10,6 +10,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+/* ***** NOTE: Funciones para los endpoints de usuarios ***** */
+
 func Register(ctx iris.Context) {
 	var userInput RegisterUserInput
 	err := ctx.ReadJSON(&userInput)
@@ -56,6 +58,50 @@ func Register(ctx iris.Context) {
 	})
 }
 
+func Login(ctx iris.Context) {
+	var userInput LoginUserInput
+	err := ctx.ReadJSON(&userInput)
+	if err != nil {
+		utils.HandleValidationErrors(err, ctx)
+		return
+	}
+
+	var existingUser models.User
+	userExists, userExistsErr := getAndHandleUserExists(&existingUser, userInput.Email)
+	if userExistsErr != nil {
+		utils.CreateInternalServerError(ctx)
+		return
+	}
+
+	errorMsg := "Invalid email or password."
+	
+	if userExists == false {
+		utils.CreateError(iris.StatusUnauthorized, "Credentials Error", errorMsg, ctx)
+		return
+	}
+
+	if existingUser.SocialLogin == true {
+		utils.CreateError(iris.StatusUnauthorized, "Credentials Error", "Social Login Account", ctx)
+		return
+	}
+
+	passwordErr := bcrypt.CompareHashAndPassword([]byte(existingUser.Password), []byte(userInput.Password))
+	if passwordErr != nil {
+		utils.CreateError(iris.StatusUnauthorized, "Credentials Error", errorMsg, ctx)
+		return
+	}
+
+	ctx.JSON(iris.Map{
+		"ID":              existingUser.ID,
+		"name":       existingUser.Name,
+		"email":           existingUser.Email,
+		"description":     existingUser.Description,
+		"picture":         existingUser.Picture,
+	})
+}
+
+/* ***** NOTE: Funciones para funcionalidades extras ***** */
+
 func getAndHandleUserExists(user *models.User, email string) (exists bool, err error) {
 	userExistsQuery := storage.DB.Where("email = ?", strings.ToLower(email)).Limit(1).Find(&user)
 
@@ -81,8 +127,15 @@ func hashAndSaltPassword(password string) (hashedPassword string, err error) {
 	return string(bytes), nil
 }
 
+/* ***** NOTE: Tipos para los endpoints ***** */
+
 type RegisterUserInput struct {
 	Name 			string 		`json:"name" validate:"required,max=256"`
 	Email     string  	`json:"email" validate:"required,max=256,email"`
 	Password  string  	`json:"password" validate:"required,min=8,max=256"`
+}
+
+type LoginUserInput struct {
+	Email    	string 	`json:"email" validate:"required,email"`
+	Password 	string 	`json:"password" validate:"required"`
 }
