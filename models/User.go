@@ -12,4 +12,5 @@ type User struct {
 	Picture 				string 				 `json:"picture"`
 	SocialLogin     bool           `json:"socialLogin"`
 	SocialProvider  string         `json:"socialProvider"`
+	Grades 					[]Grade		 		 `json:"grades"`
 }

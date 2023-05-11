@@ -11,6 +11,7 @@ import (
 func main() {
 	godotenv.Load()
 	storage.InitializeDB()
+	storage.InitializePostgresDB()
 
 	app := iris.Default()
 	app.Validator = validator.New()
