@@ -8,11 +8,17 @@ import (
 )
 
 func CreateError(statusCode int, title string, detail string, ctx iris.Context) {
-	ctx.StopWithProblem(statusCode, iris.NewProblem().Title(title).Detail(detail))
+	ctx.StopWithProblem(
+		statusCode, 
+		iris.NewProblem().
+			Title(title).
+			Detail(detail),
+	)
 }
 
 func CreateInternalServerError(ctx iris.Context) {
-	CreateError(iris.StatusInternalServerError,
+	CreateError(
+		iris.StatusInternalServerError,
 		"Internal Server Error",
 		"Internal Server Error",
 		ctx,
@@ -23,7 +29,16 @@ func CreateEmailAlreadyRegistered(ctx iris.Context) {
 	CreateError(
 		iris.StatusConflict,
 		"Conflict",
-		"Email already registered.",
+		"El Email ya existe en la base de datos.",
+		ctx,
+	)
+}
+
+func CreateQueryError(ctx iris.Context) {
+	CreateError(
+		iris.StatusBadRequest,
+		"Bad Request",
+		"Error al realizar la operación.",
 		ctx,
 	)
 }
