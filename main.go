@@ -26,6 +26,8 @@ func main() {
 		event.Post("/create", routes.CreateEvent)
 		event.Get("/get/{id}", routes.GetEventByID)
 		event.Get("/get-events/{page}", routes.GetEvents)
+		event.Get("/get-user-events/{user_id}", routes.GetEventsByUser)
+		event.Get("/get-query-events", routes.GetEventsByQuery)
 	}
 
 	// grade := app.Party("/grade")
