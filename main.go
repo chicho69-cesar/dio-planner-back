@@ -21,6 +21,38 @@ func main() {
 		test.Get("/", routes.HelloWorld)
 	}
 
+	event := app.Party("/event")
+	{
+		event.Post("/create", routes.CreateEvent)
+		event.Get("/get/{id}", routes.GetEventByID)
+		event.Get("/get-events/{page}", routes.GetEvents)
+	}
+
+	// grade := app.Party("/grade")
+	{
+
+	}
+
+	// guest := app.Party("/guest")
+	{
+
+	}
+
+	// memory := app.Party("/memory")
+	{
+
+	}
+
+	// purchase := app.Party("/purchase")
+	{
+
+	}
+
+	// todo := app.Party("/todo")
+	{
+
+	}
+
 	user := app.Party("/user") 
 	{
 		user.Post("/register", routes.Register)
