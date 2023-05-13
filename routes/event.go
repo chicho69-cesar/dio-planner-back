@@ -4,7 +4,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/chicho69-cesar/dio-planner-back/models"
 	"github.com/chicho69-cesar/dio-planner-back/storage"
 	"github.com/chicho69-cesar/dio-planner-back/utils"
 	"github.com/kataras/iris/v12"
@@ -12,14 +11,14 @@ import (
 
 // Add a event
 func CreateEvent(ctx iris.Context) {
-	var eventQuery eventQuery
-	err := ctx.ReadJSON(&eventQuery)
+	var eventInput EventInput
+	err := ctx.ReadJSON(&eventInput)
 	if err != nil {
 		utils.HandleValidationErrors(err, ctx)
 		return
 	}
 
-	var event models.Event
+	var event EventOutput
 
 	query := `
 		INSERT INTO events (name, date, description, img, location, user_id) 
@@ -29,12 +28,12 @@ func CreateEvent(ctx iris.Context) {
 
 	queryErr := storage.PostgresDB.QueryRow(
 		query, 
-		eventQuery.Name, 
-		eventQuery.Date, 
-		eventQuery.Description, 
-		eventQuery.Img, 
-		eventQuery.Location,
-		eventQuery.UserID,
+		eventInput.Name, 
+		eventInput.Date, 
+		eventInput.Description, 
+		eventInput.Img, 
+		eventInput.Location,
+		eventInput.UserID,
 	).Scan(
 		&event.ID, &event.Name, &event.Date, &event.Description, 
 		&event.Img, &event.Location, &event.UserID,
@@ -61,7 +60,7 @@ func GetEventByID(ctx iris.Context) {
 	params := ctx.Params()
 	id := params.Get("id")
 
-	var event models.Event
+	var event EventOutput
 
 	query := `
 		SELECT id, name, date, description, img, location, user_id
@@ -281,7 +280,7 @@ func DeleteEvent(ctx iris.Context) {
 	// 
 }
 
-type eventQuery struct {
+type EventInput struct {
 	Name        string 		 	`json:"name"`
 	Date 				time.Time  	`json:"date"`
 	Description string 		 	`json:"description"`
