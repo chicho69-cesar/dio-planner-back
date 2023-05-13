@@ -17,8 +17,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-/* ***** NOTE: Funciones para los endpoints de usuarios ***** */
-
+// Register a user with email and password
 func Register(ctx iris.Context) {
 	var userInput RegisterUserInput
 	err := ctx.ReadJSON(&userInput)
@@ -65,6 +64,7 @@ func Register(ctx iris.Context) {
 	})
 }
 
+// Login with user and password
 func Login(ctx iris.Context) {
 	var userInput LoginUserInput
 	err := ctx.ReadJSON(&userInput)
@@ -107,6 +107,7 @@ func Login(ctx iris.Context) {
 	})
 }
 
+// Sign in and Sign up with Facebook
 func FacebookLoginOrSignUp(ctx iris.Context) {
 	var userInput FacebookOrGoogleUserInput
 	err := ctx.ReadJSON(&userInput)
@@ -185,6 +186,7 @@ func FacebookLoginOrSignUp(ctx iris.Context) {
 	}
 }
 
+// Sign in and Sign up with Google
 func GoogleLoginOrSignUp(ctx iris.Context) {
 	var userInput FacebookOrGoogleUserInput
 	err := ctx.ReadJSON(&userInput)
@@ -265,6 +267,7 @@ func GoogleLoginOrSignUp(ctx iris.Context) {
 	}
 }
 
+// Sign in and Sign up with Apple
 func AppleLoginOrSignUp(ctx iris.Context) {
 	var userInput AppleUserInput
 	err := ctx.ReadJSON(&userInput)
@@ -348,8 +351,66 @@ func AppleLoginOrSignUp(ctx iris.Context) {
 	}
 }
 
-/* ***** NOTE: Funciones para funcionalidades extras ***** */
+// Update the information of an user
+func UpdateUser(ctx iris.Context) {
+	params := ctx.Params()
+	userID := params.Get("user_id")
 
+	var userUpdateInput UserUpdate
+	err := ctx.ReadJSON(&userUpdateInput)
+	if err != nil {
+		utils.HandleValidationErrors(err, ctx)
+		return
+	}
+
+	hashedPassword, hashErr := hashAndSaltPassword(userUpdateInput.Password)
+	if hashErr != nil {
+		utils.CreateInternalServerError(ctx)
+		return
+	}
+
+	var user models.User
+	userExists := storage.DB.
+		Where("id = ?", userID).
+		Find(&user)
+
+	if userExists.Error != nil {
+		utils.CreateInternalServerError(ctx)
+		return
+	}
+
+	if userExists.RowsAffected == 0 {
+		utils.CreateError(
+			iris.StatusNotFound, 
+			"Not Found", 
+			"User not found", 
+			ctx,
+		)
+		return
+	}
+
+	userUpdate := UserUpdate {
+		Name: userUpdateInput.Name,
+		Password: hashedPassword,
+		Description: userUpdateInput.Description,
+		Picture: userUpdateInput.Picture,
+	}
+
+	rowsUpdated := storage.DB.
+		Model(&user).
+		Updates(userUpdate)
+
+	if rowsUpdated.Error != nil {
+		utils.CreateInternalServerError(ctx)
+		return
+	}
+
+	ctx.JSON(iris.Map{
+		"message": "Usuario actualizado exitosamente",
+	})
+}
+
+/* ***** NOTE: Funciones para funcionalidades extras ***** */
 func getAndHandleUserExists(user *models.User, email string) (exists bool, err error) {
 	userExistsQuery := storage.DB.Where("email = ?", strings.ToLower(email)).Limit(1).Find(&user)
 
@@ -374,8 +435,6 @@ func hashAndSaltPassword(password string) (hashedPassword string, err error) {
 
 	return string(bytes), nil
 }
-
-/* ***** NOTE: Tipos para los endpoints ***** */
 
 type RegisterUserInput struct {
 	Name 			string 		`json:"name" validate:"required,max=256"`
@@ -408,4 +467,11 @@ type GoogleUserRes struct {
 	Name       string `json:"name"`
 	GivenName  string `json:"given_name"`
 	FamilyName string `json:"family_name"`
+}
+
+type UserUpdate struct {
+	Name     				string 				 `json:"name"`
+	Password 				string 				 `json:"password"`
+	Description 		string 				 `json:"description"`
+	Picture 				string 				 `json:"picture"`
 }

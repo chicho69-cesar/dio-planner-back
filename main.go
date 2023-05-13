@@ -64,6 +64,7 @@ func main() {
 		user.Post("/facebook", routes.FacebookLoginOrSignUp)
 		user.Post("/google", routes.GoogleLoginOrSignUp)
 		user.Post("/apple", routes.AppleLoginOrSignUp)
+		user.Patch("/update/{user_id}", routes.UpdateUser)
 	}
 
 	app.Listen(":4000")
