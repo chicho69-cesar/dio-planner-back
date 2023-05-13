@@ -38,3 +38,10 @@ type EventInput struct {
 	Location 		string 		 	`json:"location"`
 	UserID      int    		 	`json:"user_id"`
 }
+
+/* ***** GUESTS ***** */
+type GuestInput struct {
+	UserID  uint  	`json:"userID"`
+	EventID uint  	`json:"eventID"`
+	Status  string  `json:"status"`
+}

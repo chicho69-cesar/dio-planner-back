@@ -14,3 +14,11 @@ type GoogleUserRes struct {
 	GivenName  string `json:"given_name"`
 	FamilyName string `json:"family_name"`
 }
+
+/* ***** GUESTS ***** */
+type GuestResponse struct {
+	ID      int    `json:"id" gorm:"primaryKey"`
+	UserID  uint   `json:"userID"`
+	EventID uint   `json:"eventID"`
+	Status  string `json:"status"`
+}
