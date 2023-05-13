@@ -1,5 +1,7 @@
 package types
 
+import "time"
+
 /* ***** USER ***** */
 type RegisterUserInput struct {
 	Name 			string 		`json:"name" validate:"required,max=256"`
@@ -25,4 +27,14 @@ type UserUpdate struct {
 	Password 				string 				 `json:"password"`
 	Description 		string 				 `json:"description"`
 	Picture 				string 				 `json:"picture"`
+}
+
+/* ***** EVENTS *****  */
+type EventInput struct {
+	Name        string 		 	`json:"name"`
+	Date 				time.Time  	`json:"date"`
+	Description string 		 	`json:"description"`
+	Img 				string 		 	`json:"img"`
+	Location 		string 		 	`json:"location"`
+	UserID      int    		 	`json:"user_id"`
 }

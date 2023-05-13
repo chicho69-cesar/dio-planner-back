@@ -2,23 +2,23 @@ package routes
 
 import (
 	"strconv"
-	"time"
 
 	"github.com/chicho69-cesar/dio-planner-back/storage"
+	"github.com/chicho69-cesar/dio-planner-back/types"
 	"github.com/chicho69-cesar/dio-planner-back/utils"
 	"github.com/kataras/iris/v12"
 )
 
 // Add a event
 func CreateEvent(ctx iris.Context) {
-	var eventInput EventInput
+	var eventInput types.EventInput
 	err := ctx.ReadJSON(&eventInput)
 	if err != nil {
 		utils.HandleValidationErrors(err, ctx)
 		return
 	}
 
-	var event EventOutput
+	var event types.EventOutput
 
 	query := `
 		INSERT INTO events (name, date, description, img, location, user_id) 
@@ -52,7 +52,7 @@ func GetEventByID(ctx iris.Context) {
 	params := ctx.Params()
 	id := params.Get("id")
 
-	var event EventOutput
+	var event types.EventOutput
 
 	query := `
 		SELECT id, name, date, description, img, location, user_id
@@ -95,7 +95,7 @@ func GetEvents(ctx iris.Context) {
 		)
 	}
 
-	var events []EventOutput
+	var events []types.EventOutput
 
 	query := `
 		SELECT id, name, date, description, img, location, user_id
@@ -112,7 +112,7 @@ func GetEvents(ctx iris.Context) {
 	defer rows.Close()
 
 	for rows.Next() {
-		var event EventOutput
+		var event types.EventOutput
 		errRow := rows.Scan(
 			&event.ID, &event.Name, &event.Date, &event.Description, 
 			&event.Img, &event.Location, &event.UserID,
@@ -132,7 +132,7 @@ func GetEvents(ctx iris.Context) {
 	}
 
 	if len(events) == 0 {
-		ctx.JSON([]EventOutput{})
+		ctx.JSON([]types.EventOutput{})
 	} else {
 		ctx.JSON(events)
 	}
@@ -154,7 +154,7 @@ func GetEventsByUser(ctx iris.Context) {
 		)
 	}
 
-	var events []EventOutput
+	var events []types.EventOutput
 
 	query := `
 		SELECT id, name, date, description, img, location, user_id
@@ -170,7 +170,7 @@ func GetEventsByUser(ctx iris.Context) {
 	defer rows.Close()
 
 	for rows.Next() {
-		var event EventOutput
+		var event types.EventOutput
 		errRow := rows.Scan(
 			&event.ID, &event.Name, &event.Date, &event.Description, 
 			&event.Img, &event.Location, &event.UserID,
@@ -190,7 +190,7 @@ func GetEventsByUser(ctx iris.Context) {
 	}
 
 	if len(events) == 0 {
-		ctx.JSON([]EventOutput{})
+		ctx.JSON([]types.EventOutput{})
 	} else {
 		ctx.JSON(events)
 	}
@@ -198,14 +198,14 @@ func GetEventsByUser(ctx iris.Context) {
 
 // Get all events by query
 func GetEventsByQuery(ctx iris.Context) {
-	var eventQuery EventQuery
+	var eventQuery types.EventQuery
 	err := ctx.ReadJSON(&eventQuery)
 	if err != nil {
 		utils.HandleValidationErrors(err, ctx)
 		return
 	}
 
-	var events []EventOutput
+	var events []types.EventOutput
 
 	query := `
 		SELECT id, name, date, description, img, location, user_id
@@ -228,7 +228,7 @@ func GetEventsByQuery(ctx iris.Context) {
 	defer rows.Close()
 
 	for rows.Next() {
-		var event EventOutput
+		var event types.EventOutput
 		errRow := rows.Scan(
 			&event.ID, &event.Name, &event.Date, &event.Description, 
 			&event.Img, &event.Location, &event.UserID,
@@ -248,7 +248,7 @@ func GetEventsByQuery(ctx iris.Context) {
 	}
 
 	if len(events) == 0 {
-		ctx.JSON([]EventOutput{})
+		ctx.JSON([]types.EventOutput{})
 	} else {
 		ctx.JSON(events)
 	}
@@ -270,14 +270,14 @@ func UpdateEvent(ctx iris.Context) {
 		)
 	}
 
-	var eventInput EventInput
+	var eventInput types.EventInput
 	err := ctx.ReadJSON(&eventInput)
 	if err != nil {
 		utils.HandleValidationErrors(err, ctx)
 		return
 	}
 
-	var event EventOutput
+	var event types.EventOutput
 
 	query := `
 		UPDATE events
@@ -338,29 +338,4 @@ func DeleteEvent(ctx iris.Context) {
 	ctx.JSON(iris.Map{
 		"message": "Evento eliminado con éxito",
 	})
-}
-
-type EventInput struct {
-	Name        string 		 	`json:"name"`
-	Date 				time.Time  	`json:"date"`
-	Description string 		 	`json:"description"`
-	Img 				string 		 	`json:"img"`
-	Location 		string 		 	`json:"location"`
-	UserID      int    		 	`json:"user_id"`
-}
-
-type EventOutput struct {
-	ID          int    		 	`json:"id" gorm:"primaryKey"`
-	Name        string 		 	`json:"name"`
-	Date 				time.Time  	`json:"date"`
-	Description string 		 	`json:"description"`
-	Img 				string 		 	`json:"img"`
-	Location 		string 		 	`json:"location"`
-	UserID      int    		 	`json:"user_id"`
-}
-
-type EventQuery struct {
-	Name        string 		 	`json:"name"`
-	Description string 		 	`json:"description"`
-	Location 		string 		 	`json:"location"`
 }
