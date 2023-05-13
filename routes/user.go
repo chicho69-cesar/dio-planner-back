@@ -11,6 +11,7 @@ import (
 	"github.com/MicahParks/keyfunc"
 	"github.com/chicho69-cesar/dio-planner-back/models"
 	"github.com/chicho69-cesar/dio-planner-back/storage"
+	"github.com/chicho69-cesar/dio-planner-back/types"
 	"github.com/chicho69-cesar/dio-planner-back/utils"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/kataras/iris/v12"
@@ -19,7 +20,7 @@ import (
 
 // Register a user with email and password
 func Register(ctx iris.Context) {
-	var userInput RegisterUserInput
+	var userInput types.RegisterUserInput
 	err := ctx.ReadJSON(&userInput)
 	if err != nil {
 		utils.HandleValidationErrors(err, ctx)
@@ -66,7 +67,7 @@ func Register(ctx iris.Context) {
 
 // Login with user and password
 func Login(ctx iris.Context) {
-	var userInput LoginUserInput
+	var userInput types.LoginUserInput
 	err := ctx.ReadJSON(&userInput)
 	if err != nil {
 		utils.HandleValidationErrors(err, ctx)
@@ -109,7 +110,7 @@ func Login(ctx iris.Context) {
 
 // Sign in and Sign up with Facebook
 func FacebookLoginOrSignUp(ctx iris.Context) {
-	var userInput FacebookOrGoogleUserInput
+	var userInput types.FacebookOrGoogleUserInput
 	err := ctx.ReadJSON(&userInput)
 	if err != nil {
 		utils.HandleValidationErrors(err, ctx)
@@ -133,7 +134,7 @@ func FacebookLoginOrSignUp(ctx iris.Context) {
 		return
 	}
 
-	var facebookBody FacebookUserRes
+	var facebookBody types.FacebookUserRes
 	json.Unmarshal(body, &facebookBody)
 
 	if facebookBody.Email != "" {
@@ -188,7 +189,7 @@ func FacebookLoginOrSignUp(ctx iris.Context) {
 
 // Sign in and Sign up with Google
 func GoogleLoginOrSignUp(ctx iris.Context) {
-	var userInput FacebookOrGoogleUserInput
+	var userInput types.FacebookOrGoogleUserInput
 	err := ctx.ReadJSON(&userInput)
 	if err != nil {
 		utils.HandleValidationErrors(err, ctx)
@@ -215,7 +216,7 @@ func GoogleLoginOrSignUp(ctx iris.Context) {
 		return
 	}
 
-	var googleBody GoogleUserRes
+	var googleBody types.GoogleUserRes
 	json.Unmarshal(body, &googleBody)
 
 	if googleBody.Email != "" {
@@ -269,7 +270,7 @@ func GoogleLoginOrSignUp(ctx iris.Context) {
 
 // Sign in and Sign up with Apple
 func AppleLoginOrSignUp(ctx iris.Context) {
-	var userInput AppleUserInput
+	var userInput types.AppleUserInput
 	err := ctx.ReadJSON(&userInput)
 	if err != nil {
 		utils.HandleValidationErrors(err, ctx)
@@ -356,7 +357,7 @@ func UpdateUser(ctx iris.Context) {
 	params := ctx.Params()
 	userID := params.Get("user_id")
 
-	var userUpdateInput UserUpdate
+	var userUpdateInput types.UserUpdate
 	err := ctx.ReadJSON(&userUpdateInput)
 	if err != nil {
 		utils.HandleValidationErrors(err, ctx)
@@ -389,7 +390,7 @@ func UpdateUser(ctx iris.Context) {
 		return
 	}
 
-	userUpdate := UserUpdate {
+	userUpdate := types.UserUpdate {
 		Name: userUpdateInput.Name,
 		Password: hashedPassword,
 		Description: userUpdateInput.Description,
@@ -434,44 +435,4 @@ func hashAndSaltPassword(password string) (hashedPassword string, err error) {
 	}
 
 	return string(bytes), nil
-}
-
-type RegisterUserInput struct {
-	Name 			string 		`json:"name" validate:"required,max=256"`
-	Email     string  	`json:"email" validate:"required,max=256,email"`
-	Password  string  	`json:"password" validate:"required,min=8,max=256"`
-}
-
-type LoginUserInput struct {
-	Email    	string 	`json:"email" validate:"required,email"`
-	Password 	string 	`json:"password" validate:"required"`
-}
-
-type FacebookOrGoogleUserInput struct {
-	AccessToken string `json:"accessToken" validate:"required"`
-}
-
-type AppleUserInput struct {
-	IdentityToken string `json:"identityToken" validate:"required"`
-}
-
-type FacebookUserRes struct {
-	ID    string `json:"id"`
-	Name  string `json:"name"`
-	Email string `json:"email"`
-}
-
-type GoogleUserRes struct {
-	ID         string `json:"id"`
-	Email      string `json:"email"`
-	Name       string `json:"name"`
-	GivenName  string `json:"given_name"`
-	FamilyName string `json:"family_name"`
-}
-
-type UserUpdate struct {
-	Name     				string 				 `json:"name"`
-	Password 				string 				 `json:"password"`
-	Description 		string 				 `json:"description"`
-	Picture 				string 				 `json:"picture"`
 }
