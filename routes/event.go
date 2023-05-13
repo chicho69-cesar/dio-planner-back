@@ -44,15 +44,7 @@ func CreateEvent(ctx iris.Context) {
 		return
 	}
 
-	ctx.JSON(iris.Map{
-		"ID":  				 event.ID,
-		"name": 			 event.Name,
-		"date": 			 event.Date,
-		"description": event.Description,
-		"img": 				 event.Img,
-		"location": 	 event.Location,
-		"user_id": 		 event.UserID,
-	})
+	ctx.JSON(event)
 }
 
 // Get a event by id
@@ -84,15 +76,7 @@ func GetEventByID(ctx iris.Context) {
 		return
 	}
 
-	ctx.JSON(iris.Map{
-		"ID":  				 event.ID,
-		"name": 			 event.Name,
-		"date": 			 event.Date,
-		"description": event.Description,
-		"img": 				 event.Img,
-		"location": 	 event.Location,
-		"user_id": 		 event.UserID,
-	})
+	ctx.JSON(event)
 }
 
 // Get all events by pagination
@@ -272,12 +256,88 @@ func GetEventsByQuery(ctx iris.Context) {
 
 // Update a event
 func UpdateEvent(ctx iris.Context) {
-	// 
+	params := ctx.Params()
+	eventID := params.Get("event_id")
+
+	var eventInputID int
+	eventInputID, errConvert := strconv.Atoi(eventID)
+	if errConvert != nil {
+		utils.CreateError(
+			iris.StatusBadRequest,
+			"Error",
+			"Error ID invalido",
+			ctx,
+		)
+	}
+
+	var eventInput EventInput
+	err := ctx.ReadJSON(&eventInput)
+	if err != nil {
+		utils.HandleValidationErrors(err, ctx)
+		return
+	}
+
+	var event EventOutput
+
+	query := `
+		UPDATE events
+		SET name = $1, date = $2, description = $3, img = $4, location = $5, user_id = $6
+		WHERE id = $7
+		RETURNING id, name, date, description, img, location, user_id
+	`
+
+	queryErr := storage.PostgresDB.QueryRow(
+		query, 
+		eventInput.Name, 
+		eventInput.Date, 
+		eventInput.Description, 
+		eventInput.Img, 
+		eventInput.Location,
+		eventInput.UserID,
+		eventInputID,
+	).Scan(
+		&event.ID, &event.Name, &event.Date, &event.Description, 
+		&event.Img, &event.Location, &event.UserID,
+	)
+
+	if queryErr != nil {
+		utils.CreateQueryError(ctx)
+		return
+	}
+
+	ctx.JSON(event)
 }
 
 // Delete a event
 func DeleteEvent(ctx iris.Context) {
-	// 
+	params := ctx.Params()
+	eventID := params.Get("event_id")
+
+	var eventInputID int
+	eventInputID, errConvert := strconv.Atoi(eventID)
+	if errConvert != nil {
+		utils.CreateError(
+			iris.StatusBadRequest,
+			"Error",
+			"Error ID invalido",
+			ctx,
+		)
+	}
+
+	query := `
+		DELETE FROM events
+		WHERE id = $1
+	`
+
+	_, queryErr := storage.PostgresDB.Exec(query, eventInputID)
+	if queryErr != nil {
+		utils.CreateQueryError(ctx)
+		return
+	}
+
+	ctx.JSON(iris.Map{
+		"message": "Evento eliminado con éxito",
+	})
 }
 
 type EventInput struct {

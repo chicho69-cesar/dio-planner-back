@@ -28,6 +28,8 @@ func main() {
 		event.Get("/get-events/{page}", routes.GetEvents)
 		event.Get("/get-user-events/{user_id}", routes.GetEventsByUser)
 		event.Get("/get-query-events", routes.GetEventsByQuery)
+		event.Patch("/update/{event_id}", routes.UpdateEvent)
+		event.Delete("/delete/{event_id}", routes.DeleteEvent)
 	}
 
 	// grade := app.Party("/grade")
