@@ -53,3 +53,10 @@ type GradeInput struct {
 	EventID uint   `json:"eventID"`
 	UserID  uint   `json:"userID"`
 }
+
+/* ***** MEMORIES ***** */
+type MemoryInput struct {
+	Title       string    `json:"title"`
+	Picture     string    `json:"picture"`
+	EventID 		uint 			`json:"eventID"`
+}

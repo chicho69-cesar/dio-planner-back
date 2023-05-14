@@ -46,3 +46,11 @@ type GradeOutput struct {
 	EventID uint   `json:"eventID"`
 	UserID  uint   `json:"userID"`
 }
+
+/* ***** MEMORIES ***** */
+type MemoryOutput struct {
+	ID          int    		`json:"id" gorm:"primaryKey"`
+	Title       string    `json:"title"`
+	Picture     string    `json:"picture"`
+	EventID 		uint 			`json:"eventID"`
+}

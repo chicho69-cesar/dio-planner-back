@@ -49,9 +49,10 @@ func main() {
 		guest.Get("/get-my-events/{user_id}", routes.GetMyEvents)
 	}
 
-	// memory := app.Party("/memory")
+	memory := app.Party("/memory")
 	{
-
+		memory.Get("/get-memories/{event_id}/{page}", routes.GetMemories)
+		memory.Post("/share-memory", routes.ShareMemory)
 	}
 
 	// purchase := app.Party("/purchase")
