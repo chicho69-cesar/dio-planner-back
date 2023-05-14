@@ -1,7 +1,7 @@
 <p align="center">
   <img
   src="https://go.dev/blog/go-brand/Go-Logo/SVG/Go-Logo_Blue.svg"
-		width="100" alt="Nest Logo"
+		width="200" alt="Nest Logo"
 	/>
 </p>
 
