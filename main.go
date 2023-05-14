@@ -55,9 +55,12 @@ func main() {
 		memory.Post("/share-memory", routes.ShareMemory)
 	}
 
-	// purchase := app.Party("/purchase")
+	purchase := app.Party("/purchase")
 	{
-
+		purchase.Post("/add-purchase", routes.AddPurchase)
+		purchase.Get("/get-purchases/{event_id}", routes.GetPurchases)
+		purchase.Patch("/update-purchase/{purchase_id}", routes.UpdatePurchase)
+		purchase.Delete("/delete-purchase/{purchase_id}", routes.DeletePurchase)
 	}
 
 	todo := app.Party("/todo")

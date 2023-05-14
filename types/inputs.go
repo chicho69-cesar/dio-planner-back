@@ -68,3 +68,10 @@ type TodoInput struct {
 	Complete 		bool 				`json:"complete"`
 	EventID 		uint 				`json:"eventID"`
 }
+
+/* ***** PURCHASES ***** */
+type PurchaseInput struct {
+	Title       string    `json:"title"`
+	Price       float64   `json:"price"`
+	EventID 		uint 			`json:"eventID"`
+}

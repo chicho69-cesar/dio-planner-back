@@ -63,3 +63,11 @@ type TodoOutput struct {
 	Complete 		bool 				`json:"complete"`
 	EventID 		uint 				`json:"eventID"`
 }
+
+/* ***** PURCHASES ***** */
+type PurchaseOutput struct {
+	ID          int    		`json:"id" gorm:"primaryKey"`
+	Title       string    `json:"title"`
+	Price       float64   `json:"price"`
+	EventID 		uint 			`json:"eventID"`
+}
