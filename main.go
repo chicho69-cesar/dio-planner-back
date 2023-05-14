@@ -60,9 +60,12 @@ func main() {
 
 	}
 
-	// todo := app.Party("/todo")
+	todo := app.Party("/todo")
 	{
-
+		todo.Post("/add-todo", routes.AddTodo)
+		todo.Get("/get-todos/{event_id}", routes.GetTodos)
+		todo.Patch("/update-todo/{todo_id}", routes.UpdateTodo)
+		todo.Delete("/delete-todo/{todo_id}", routes.DeleteTodo)
 	}
 
 	user := app.Party("/user")

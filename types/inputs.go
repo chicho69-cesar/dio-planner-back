@@ -60,3 +60,11 @@ type MemoryInput struct {
 	Picture     string    `json:"picture"`
 	EventID 		uint 			`json:"eventID"`
 }
+
+/* ***** TODOS ***** */
+type TodoInput struct {
+	Text 				string 			`json:"text"`
+	Date 				time.Time  	`json:"date"`
+	Complete 		bool 				`json:"complete"`
+	EventID 		uint 				`json:"eventID"`
+}
