@@ -32,9 +32,10 @@ func main() {
 		event.Delete("/delete/{event_id}", routes.DeleteEvent)
 	}
 
-	// grade := app.Party("/grade")
+	grade := app.Party("/grade")
 	{
-
+		grade.Post("/add-grade", routes.AddGrade)
+		grade.Get("/get-grades/{event_id}", routes.GetGrades)
 	}
 
 	guest := app.Party("/guest")

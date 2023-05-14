@@ -37,3 +37,12 @@ type InvitationsOutput struct {
 	Description string 		`json:"description"`
 	Img     		string 		`json:"img"`
 }
+
+/* ***** GRADES ***** */
+type GradeOutput struct {
+	ID      int    `json:"id"`
+	Opinion string `json:"opinion"`
+	Grade   int    `json:"grade"`
+	EventID uint   `json:"eventID"`
+	UserID  uint   `json:"userID"`
+}

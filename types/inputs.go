@@ -45,3 +45,11 @@ type GuestInput struct {
 	EventID uint  	`json:"eventID"`
 	Status  string  `json:"status"`
 }
+
+/* ***** GRADES ***** */
+type GradeInput struct {
+	Opinion string `json:"opinion"`
+	Grade   int    `json:"grade"`
+	EventID uint   `json:"eventID"`
+	UserID  uint   `json:"userID"`
+}
