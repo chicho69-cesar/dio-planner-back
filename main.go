@@ -52,6 +52,7 @@ func main() {
 	memory := app.Party("/memory")
 	{
 		memory.Get("/get-memories/{event_id}/{page}", routes.GetMemories)
+		memory.Get("/get-memories/{event_id}", routes.GetAllMemories)
 		memory.Post("/share-memory", routes.ShareMemory)
 	}
 

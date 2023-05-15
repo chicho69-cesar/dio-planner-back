@@ -91,6 +91,72 @@ func GetMemories(ctx iris.Context) {
 	}
 }
 
+// Get all memories
+func GetAllMemories(ctx iris.Context) {
+	params := ctx.Params()
+	
+	eventID := params.Get("event_id")
+
+	var eventInputID int
+	eventInputID, errConvert := strconv.Atoi(eventID)
+	if errConvert != nil {
+		utils.CreateError(
+			iris.StatusBadRequest,
+			"Error",
+			"Error al recibir el parámetro event_id",
+			ctx,
+		)
+	}
+
+
+	var memories []types.MemoryOutput
+
+	query := `
+		SELECT id, title, picture, event_id
+		FROM memories
+		WHERE event_id = $1
+		ORDER BY id DESC
+	`
+
+	rows, queryErr := storage.PostgresDB.Query(
+		query, 
+		eventInputID,
+	)
+	if queryErr != nil {
+		utils.CreateQueryError(ctx)
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var memory types.MemoryOutput
+		errRow := rows.Scan(
+			&memory.ID, 
+			&memory.Title,
+			&memory.Picture,
+			&memory.EventID,
+		)
+
+		if errRow != nil {
+			utils.CreateQueryError(ctx)
+			return
+		}
+
+		memories = append(memories, memory)
+	}
+
+	if errRead := rows.Err(); errRead != nil {
+		utils.CreateQueryError(ctx)
+		return
+	}
+
+	if len(memories) == 0 {
+		ctx.JSON([]types.EventOutput{})
+	} else {
+		ctx.JSON(memories)
+	}
+}
+
 // Share a memory
 func ShareMemory(ctx iris.Context) {
 	var memoryInput types.MemoryInput
