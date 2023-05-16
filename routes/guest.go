@@ -48,12 +48,8 @@ func AddGuest(ctx iris.Context) {
 
 // Search user to send invitations to them
 func SearchGuests(ctx iris.Context) {
-	var userQuery types.UserQuery
-	err := ctx.ReadJSON(&userQuery)
-	if err != nil {
-		utils.HandleValidationErrors(err, ctx)
-		return
-	}
+	params := ctx.Params()
+	searchQuery := params.Get("query")
 
 	var guests []types.UserOutput
 
@@ -65,7 +61,7 @@ func SearchGuests(ctx iris.Context) {
 
 	rows, queryErr := storage.PostgresDB.Query(
 		query,
-		"%"+userQuery.Name+"%",
+		"%"+searchQuery+"%",
 	)
 	if queryErr != nil {
 		utils.CreateQueryError(ctx)
