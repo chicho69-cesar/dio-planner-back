@@ -132,10 +132,10 @@ func GetGuests(ctx iris.Context) {
 	for rows.Next() {
 		var guest types.GuestsOutput
 		errRow := rows.Scan(
-			&guest.ID, 
-			&guest.Name, 
-			&guest.Description, 
-			&guest.Picture, 
+			&guest.ID,
+			&guest.Name,
+			&guest.Description,
+			&guest.Picture,
 			&guest.Status,
 		)
 
@@ -194,11 +194,11 @@ func GetInvitations(ctx iris.Context) {
 	for rows.Next() {
 		var invitation types.InvitationsOutput
 		errRow := rows.Scan(
-			&invitation.ID, 
-			&invitation.Name, 
+			&invitation.ID,
+			&invitation.Name,
 			&invitation.Date,
-			&invitation.Description, 
-			&invitation.Img, 
+			&invitation.Description,
+			&invitation.Img,
 		)
 
 		if errRow != nil {
@@ -319,7 +319,8 @@ func GetMyEvents(ctx iris.Context) {
 
 	actualStatus := "Aceptada"
 	query := `
-		SELECT events.id, events.name, events.date, events.description, 
+		SELECT DISTINCT ON (events.id)
+			events.id, events.name, events.date, events.description, 
 			events.img, events.location, events.user_id 
 		FROM guests, events 
 		WHERE (events.user_id = $1 OR guests.user_id = $2) 
@@ -328,9 +329,9 @@ func GetMyEvents(ctx iris.Context) {
 	`
 
 	rows, queryErr := storage.PostgresDB.Query(
-		query, 
-		userInputID, 
-		userInputID, 
+		query,
+		userInputID,
+		userInputID,
 		actualStatus,
 	)
 	if queryErr != nil {
@@ -342,11 +343,11 @@ func GetMyEvents(ctx iris.Context) {
 	for rows.Next() {
 		var event types.EventOutput
 		errRow := rows.Scan(
-			&event.ID, 
-			&event.Name, 
+			&event.ID,
+			&event.Name,
 			&event.Date,
-			&event.Description, 
-			&event.Img, 
+			&event.Description,
+			&event.Img,
 			&event.Location,
 			&event.UserID,
 		)
