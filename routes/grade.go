@@ -45,6 +45,14 @@ func AddGrade(ctx iris.Context) {
 		return
 	}
 
+	query = `
+		SELECT name FROM users WHERE id = $1
+	`
+
+	queryErr = storage.PostgresDB.
+		QueryRow(query, grade.UserID).
+		Scan(&grade.User)
+
 	ctx.JSON(grade)
 }
 
@@ -67,10 +75,10 @@ func GetGrades(ctx iris.Context) {
 	var grades []types.GradeOutput
 
 	query := `
-		SELECT id, opinion, grade, event_id, user_id
-		FROM grades
-		WHERE event_id = $1
-		ORDER BY id DESC
+		SELECT grades.id, opinion, grade, users.name, event_id, user_id
+		FROM grades, users
+		WHERE event_id = $1 AND users.id = user_id
+		ORDER BY grades.id DESC
 	`
 
 	rows, queryErr := storage.PostgresDB.Query(query, gradeInputID)
@@ -86,6 +94,7 @@ func GetGrades(ctx iris.Context) {
 			&grade.ID, 
 			&grade.Opinion,
 			&grade.Grade,
+			&grade.User,
 			&grade.EventID,
 			&grade.UserID,
 		)

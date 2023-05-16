@@ -101,7 +101,7 @@ func Login(ctx iris.Context) {
 
 	ctx.JSON(iris.Map{
 		"ID":              existingUser.ID,
-		"name":       existingUser.Name,
+		"name":       		 existingUser.Name,
 		"email":           existingUser.Email,
 		"description":     existingUser.Description,
 		"picture":         existingUser.Picture,

@@ -43,6 +43,7 @@ type GradeOutput struct {
 	ID      int    `json:"id"`
 	Opinion string `json:"opinion"`
 	Grade   int    `json:"grade"`
+	User 		string `json:"user"`
 	EventID uint   `json:"eventID"`
 	UserID  uint   `json:"userID"`
 }
