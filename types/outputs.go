@@ -18,6 +18,7 @@ type EventOutput struct {
 	Description string    `json:"description"`
 	Img         string    `json:"img"`
 	Location    string    `json:"location"`
+	Topic       string    `json:"topic"`
 	UserID      int       `json:"user_id"`
 }
 
@@ -29,6 +30,7 @@ type TopEventOutput struct {
 	Description   string    `json:"description"`
 	Img           string    `json:"img"`
 	Location      string    `json:"location"`
+	Topic         string    `json:"topic"`
 	UserID        int       `json:"user_id"`
 	Accessibility string    `json:"accessibility"`
 }
@@ -40,6 +42,7 @@ type SearchEventOutput struct {
 	Description   string    `json:"description"`
 	Img           string    `json:"img"`
 	Location      string    `json:"location"`
+	Topic         string    `json:"topic"`
 	UserID        int       `json:"user_id"`
 	Accessibility string    `json:"accessibility"`
 }

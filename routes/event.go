@@ -55,7 +55,7 @@ func GetEventByID(ctx iris.Context) {
 	var event types.EventOutput
 
 	query := `
-		SELECT id, name, date, description, img, location, user_id
+		SELECT id, name, date, description, img, location, topic, user_id
 		FROM events WHERE id = $1
 	`
 
@@ -63,7 +63,7 @@ func GetEventByID(ctx iris.Context) {
 		QueryRow(query, id).
 		Scan(
 			&event.ID, &event.Name, &event.Date, &event.Description,
-			&event.Img, &event.Location, &event.UserID,
+			&event.Img, &event.Location, &event.Topic, &event.UserID,
 		)
 
 	if queryErr != nil {
@@ -98,7 +98,7 @@ func GetEvents(ctx iris.Context) {
 	var events []types.EventOutput
 
 	query := `
-		SELECT id, name, date, description, img, location, user_id
+		SELECT id, name, date, description, img, location, topic, user_id
 		FROM events
 		LIMIT $1
 		OFFSET $2
@@ -115,7 +115,7 @@ func GetEvents(ctx iris.Context) {
 		var event types.EventOutput
 		errRow := rows.Scan(
 			&event.ID, &event.Name, &event.Date, &event.Description,
-			&event.Img, &event.Location, &event.UserID,
+			&event.Img, &event.Location, &event.Topic, &event.UserID,
 		)
 
 		if errRow != nil {
@@ -142,7 +142,7 @@ func GetTopEvents(ctx iris.Context) {
 	var events []types.TopEventOutput
 
 	query := `
-		SELECT AVG(grade), events.id, events.name, events.date, events.description, events.img, events.location, events.user_id, events.accessibility
+		SELECT AVG(grade), events.id, events.name, events.date, events.description, events.img, events.location, events.topic, events.user_id, events.accessibility
 		FROM grades, events 
 		WHERE grades.event_id = events.id AND events.accessibility = $1
 		GROUP BY events.id 
@@ -168,6 +168,7 @@ func GetTopEvents(ctx iris.Context) {
 			&event.Description,
 			&event.Img,
 			&event.Location,
+			&event.Topic,
 			&event.UserID,
 			&event.Accessibility,
 		)
@@ -211,7 +212,7 @@ func GetEventsByUser(ctx iris.Context) {
 	var events []types.EventOutput
 
 	query := `
-		SELECT id, name, date, description, img, location, user_id
+		SELECT id, name, date, description, img, location, topic, user_id
 		FROM events
 		WHERE user_id = $1
 	`
@@ -227,7 +228,7 @@ func GetEventsByUser(ctx iris.Context) {
 		var event types.EventOutput
 		errRow := rows.Scan(
 			&event.ID, &event.Name, &event.Date, &event.Description,
-			&event.Img, &event.Location, &event.UserID,
+			&event.Img, &event.Location, &event.Topic, &event.UserID,
 		)
 
 		if errRow != nil {
@@ -258,7 +259,7 @@ func GetEventsByQuery(ctx iris.Context) {
 	var events []types.SearchEventOutput
 
 	query := `
-		SELECT id, name, date, description, img, location, user_id, accessibility
+		SELECT id, name, date, description, img, location, topic, user_id, accessibility
 		FROM events
 		WHERE (name LIKE $1 OR location LIKE $2) AND accessibility = $3
 	`
@@ -283,7 +284,7 @@ func GetEventsByQuery(ctx iris.Context) {
 		var event types.SearchEventOutput
 		errRow := rows.Scan(
 			&event.ID, &event.Name, &event.Date, &event.Description,
-			&event.Img, &event.Location, &event.UserID, &event.Accessibility,
+			&event.Img, &event.Location, &event.Topic, &event.UserID, &event.Accessibility,
 		)
 
 		if errRow != nil {
