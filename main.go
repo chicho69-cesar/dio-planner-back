@@ -26,6 +26,7 @@ func main() {
 		event.Post("/create", routes.CreateEvent)
 		event.Get("/get/{id}", routes.GetEventByID)
 		event.Get("/get-events/{page}", routes.GetEvents)
+		event.Get("/get-top-events", routes.GetTopEvents)
 		event.Get("/get-user-events/{user_id}", routes.GetEventsByUser)
 		event.Get("/get-query-events", routes.GetEventsByQuery)
 		event.Patch("/update/{event_id}", routes.UpdateEvent)
@@ -41,7 +42,7 @@ func main() {
 	guest := app.Party("/guest")
 	{
 		guest.Post("/add-guest", routes.AddGuest)
-		guest.Get("/search-guests/{query}", routes.SearchGuests)
+		guest.Get("/search-guests", routes.SearchGuests)
 		guest.Get("/get-guests/{event_id}", routes.GetGuests)
 		guest.Get("/get-invitations/{user_id}", routes.GetInvitations)
 		guest.Patch("/accept-invitation/{guest_id}", routes.AcceptInvitation)

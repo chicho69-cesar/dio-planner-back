@@ -48,8 +48,7 @@ func AddGuest(ctx iris.Context) {
 
 // Search user to send invitations to them
 func SearchGuests(ctx iris.Context) {
-	params := ctx.Params()
-	searchQuery := params.Get("query")
+	var searchQuery string = ctx.URLParam("query")
 
 	var guests []types.UserOutput
 

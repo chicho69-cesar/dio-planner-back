@@ -27,15 +27,15 @@ func CreateEvent(ctx iris.Context) {
 	`
 
 	queryErr := storage.PostgresDB.QueryRow(
-		query, 
-		eventInput.Name, 
-		eventInput.Date, 
-		eventInput.Description, 
-		eventInput.Img, 
+		query,
+		eventInput.Name,
+		eventInput.Date,
+		eventInput.Description,
+		eventInput.Img,
 		eventInput.Location,
 		eventInput.UserID,
 	).Scan(
-		&event.ID, &event.Name, &event.Date, &event.Description, 
+		&event.ID, &event.Name, &event.Date, &event.Description,
 		&event.Img, &event.Location, &event.UserID,
 	)
 
@@ -62,7 +62,7 @@ func GetEventByID(ctx iris.Context) {
 	queryErr := storage.PostgresDB.
 		QueryRow(query, id).
 		Scan(
-			&event.ID, &event.Name, &event.Date, &event.Description, 
+			&event.ID, &event.Name, &event.Date, &event.Description,
 			&event.Img, &event.Location, &event.UserID,
 		)
 
@@ -114,7 +114,7 @@ func GetEvents(ctx iris.Context) {
 	for rows.Next() {
 		var event types.EventOutput
 		errRow := rows.Scan(
-			&event.ID, &event.Name, &event.Date, &event.Description, 
+			&event.ID, &event.Name, &event.Date, &event.Description,
 			&event.Img, &event.Location, &event.UserID,
 		)
 
@@ -133,6 +133,60 @@ func GetEvents(ctx iris.Context) {
 
 	if len(events) == 0 {
 		ctx.JSON([]types.EventOutput{})
+	} else {
+		ctx.JSON(events)
+	}
+}
+
+func GetTopEvents(ctx iris.Context) {
+	var events []types.TopEventOutput
+
+	query := `
+		SELECT AVG(grade), events.id, events.name, events.date, events.description, events.img, events.location, events.user_id, events.accessibility
+		FROM grades, events 
+		WHERE grades.event_id = events.id AND events.accessibility = $1
+		GROUP BY events.id 
+		ORDER BY 1 DESC;
+	`
+
+	var accessibility string = "publico"
+
+	rows, queryErr := storage.PostgresDB.Query(query, accessibility)
+	if queryErr != nil {
+		utils.CreateQueryError(ctx)
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var event types.TopEventOutput
+		errRow := rows.Scan(
+			&event.AVG,
+			&event.ID,
+			&event.Name,
+			&event.Date,
+			&event.Description,
+			&event.Img,
+			&event.Location,
+			&event.UserID,
+			&event.Accessibility,
+		)
+
+		if errRow != nil {
+			utils.CreateQueryError(ctx)
+			return
+		}
+
+		events = append(events, event)
+	}
+
+	if errRead := rows.Err(); errRead != nil {
+		utils.CreateQueryError(ctx)
+		return
+	}
+
+	if len(events) == 0 {
+		ctx.JSON([]types.TopEventOutput{})
 	} else {
 		ctx.JSON(events)
 	}
@@ -172,7 +226,7 @@ func GetEventsByUser(ctx iris.Context) {
 	for rows.Next() {
 		var event types.EventOutput
 		errRow := rows.Scan(
-			&event.ID, &event.Name, &event.Date, &event.Description, 
+			&event.ID, &event.Name, &event.Date, &event.Description,
 			&event.Img, &event.Location, &event.UserID,
 		)
 
@@ -198,12 +252,9 @@ func GetEventsByUser(ctx iris.Context) {
 
 // Get all events by query
 func GetEventsByQuery(ctx iris.Context) {
-	var eventQuery types.EventQuery
-	err := ctx.ReadJSON(&eventQuery)
-	if err != nil {
-		utils.HandleValidationErrors(err, ctx)
-		return
-	}
+	var queryName string = ctx.URLParam("name")
+	var queryDescription string = ctx.URLParam("description")
+	var queryLocation string = ctx.URLParam("location")
 
 	var events []types.EventOutput
 
@@ -216,10 +267,10 @@ func GetEventsByQuery(ctx iris.Context) {
 	`
 
 	rows, queryErr := storage.PostgresDB.Query(
-		query, 
-		"%" + eventQuery.Name + "%",
-		"%" + eventQuery.Description + "%",
-		"%" + eventQuery.Location + "%",
+		query,
+		"%"+queryName+"%",
+		"%"+queryDescription+"%",
+		"%"+queryLocation+"%",
 	)
 	if queryErr != nil {
 		utils.CreateQueryError(ctx)
@@ -230,7 +281,7 @@ func GetEventsByQuery(ctx iris.Context) {
 	for rows.Next() {
 		var event types.EventOutput
 		errRow := rows.Scan(
-			&event.ID, &event.Name, &event.Date, &event.Description, 
+			&event.ID, &event.Name, &event.Date, &event.Description,
 			&event.Img, &event.Location, &event.UserID,
 		)
 
@@ -287,16 +338,16 @@ func UpdateEvent(ctx iris.Context) {
 	`
 
 	queryErr := storage.PostgresDB.QueryRow(
-		query, 
-		eventInput.Name, 
-		eventInput.Date, 
-		eventInput.Description, 
-		eventInput.Img, 
+		query,
+		eventInput.Name,
+		eventInput.Date,
+		eventInput.Description,
+		eventInput.Img,
 		eventInput.Location,
 		eventInput.UserID,
 		eventInputID,
 	).Scan(
-		&event.ID, &event.Name, &event.Date, &event.Description, 
+		&event.ID, &event.Name, &event.Date, &event.Description,
 		&event.Img, &event.Location, &event.UserID,
 	)
 
