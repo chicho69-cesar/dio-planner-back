@@ -33,6 +33,17 @@ type TopEventOutput struct {
 	Accessibility string    `json:"accessibility"`
 }
 
+type SearchEventOutput struct {
+	ID            int       `json:"id" gorm:"primaryKey"`
+	Name          string    `json:"name"`
+	Date          time.Time `json:"date"`
+	Description   string    `json:"description"`
+	Img           string    `json:"img"`
+	Location      string    `json:"location"`
+	UserID        int       `json:"user_id"`
+	Accessibility string    `json:"accessibility"`
+}
+
 /* ***** GUESTS ***** */
 type GuestsOutput struct {
 	ID          int    `json:"id"`

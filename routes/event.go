@@ -255,21 +255,23 @@ func GetEventsByQuery(ctx iris.Context) {
 	var queryName string = ctx.URLParam("name")
 	var queryLocation string = ctx.URLParam("location")
 
-	var events []types.EventOutput
+	var events []types.SearchEventOutput
 
 	query := `
-		SELECT id, name, date, description, img, location, user_id
+		SELECT id, name, date, description, img, location, user_id, accessibility
 		FROM events
-		WHERE name LIKE $1 OR location LIKE $2
+		WHERE (name LIKE $1 OR location LIKE $2) AND accessibility = $3
 	`
 
 	var search1 string = "%" + queryName + "%"
 	var search2 string = "%" + queryLocation + "%"
+	var accessibility string = "publico"
 
 	rows, queryErr := storage.PostgresDB.Query(
 		query,
 		search1,
 		search2,
+		accessibility,
 	)
 	if queryErr != nil {
 		utils.CreateQueryError(ctx)
@@ -278,10 +280,10 @@ func GetEventsByQuery(ctx iris.Context) {
 	defer rows.Close()
 
 	for rows.Next() {
-		var event types.EventOutput
+		var event types.SearchEventOutput
 		errRow := rows.Scan(
 			&event.ID, &event.Name, &event.Date, &event.Description,
-			&event.Img, &event.Location, &event.UserID,
+			&event.Img, &event.Location, &event.UserID, &event.Accessibility,
 		)
 
 		if errRow != nil {
@@ -298,7 +300,7 @@ func GetEventsByQuery(ctx iris.Context) {
 	}
 
 	if len(events) == 0 {
-		ctx.JSON([]types.EventOutput{})
+		ctx.JSON([]types.SearchEventOutput{})
 	} else {
 		ctx.JSON(events)
 	}
