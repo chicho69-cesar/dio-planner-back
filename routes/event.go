@@ -21,9 +21,9 @@ func CreateEvent(ctx iris.Context) {
 	var event types.EventOutput
 
 	query := `
-		INSERT INTO events (name, date, description, img, location, user_id) 
-		VALUES ($1, $2, $3, $4, $5, $6)
-		RETURNING id, name, date, description, img, location, user_id
+		INSERT INTO events (name, date, description, img, location, topic, accessibility, user_id) 
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+		RETURNING id, name, date, description, img, location, topic, user_id
 	`
 
 	queryErr := storage.PostgresDB.QueryRow(
@@ -33,10 +33,12 @@ func CreateEvent(ctx iris.Context) {
 		eventInput.Description,
 		eventInput.Img,
 		eventInput.Location,
+		eventInput.Topic,
+		eventInput.Accessibility,
 		eventInput.UserID,
 	).Scan(
 		&event.ID, &event.Name, &event.Date, &event.Description,
-		&event.Img, &event.Location, &event.UserID,
+		&event.Img, &event.Location, &event.Topic, &event.UserID,
 	)
 
 	if queryErr != nil {

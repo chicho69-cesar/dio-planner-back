@@ -15,5 +15,6 @@ type Event struct {
 	Img           string    `json:"img"`
 	Location      string    `json:"location"`
 	Accessibility string    `json:"accessibility"`
+	Topic         string    `json:"topic"`
 	UserID        uint      `json:"userID"`
 }
