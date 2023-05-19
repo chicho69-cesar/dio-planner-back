@@ -46,22 +46,22 @@ func Register(ctx iris.Context) {
 	}
 
 	newUser = models.User{
-		Name:   		 userInput.Name,
+		Name:        userInput.Name,
 		Email:       strings.ToLower(userInput.Email),
 		Password:    hashedPassword,
 		Description: "",
-		Picture: 		 "https://dio-planner.s3.us-east-2.amazonaws.com/no-image.jpg",
+		Picture:     "https://dio-planner.s3.us-east-2.amazonaws.com/no-image.jpg",
 		SocialLogin: false,
 	}
 
 	storage.DB.Create(&newUser)
 
 	ctx.JSON(iris.Map{
-		"ID":              newUser.ID,
-		"name":       		 newUser.Name,
-		"email":           newUser.Email,
-		"description":     newUser.Description,
-		"picture":         newUser.Picture,
+		"ID":          newUser.ID,
+		"name":        newUser.Name,
+		"email":       newUser.Email,
+		"description": newUser.Description,
+		"picture":     newUser.Picture,
 	})
 }
 
@@ -82,7 +82,7 @@ func Login(ctx iris.Context) {
 	}
 
 	errorMsg := "Invalid email or password."
-	
+
 	if userExists == false {
 		utils.CreateError(iris.StatusUnauthorized, "Credentials Error", errorMsg, ctx)
 		return
@@ -100,11 +100,11 @@ func Login(ctx iris.Context) {
 	}
 
 	ctx.JSON(iris.Map{
-		"ID":              existingUser.ID,
-		"name":       		 existingUser.Name,
-		"email":           existingUser.Email,
-		"description":     existingUser.Description,
-		"picture":         existingUser.Picture,
+		"ID":          existingUser.ID,
+		"name":        existingUser.Name,
+		"email":       existingUser.Email,
+		"description": existingUser.Description,
+		"picture":     existingUser.Picture,
 	})
 }
 
@@ -149,21 +149,21 @@ func FacebookLoginOrSignUp(ctx iris.Context) {
 		if userExists == false {
 			nameArr := strings.SplitN(facebookBody.Name, " ", 2)
 			user = models.User{
-				Name: 			 		nameArr[0] + " " + nameArr[1], 
-				Email: 					facebookBody.Email, 
-				Description: 		"",
-				Picture: 				"https://dio-planner.s3.us-east-2.amazonaws.com/no-image.jpg",
-				SocialLogin: 		true, 
+				Name:           nameArr[0] + " " + nameArr[1],
+				Email:          facebookBody.Email,
+				Description:    "",
+				Picture:        "https://dio-planner.s3.us-east-2.amazonaws.com/no-image.jpg",
+				SocialLogin:    true,
 				SocialProvider: "Facebook",
 			}
 			storage.DB.Create(&user)
 
 			ctx.JSON(iris.Map{
-				"ID":              user.ID,
-				"name":       		 user.Name,
-				"email":           user.Email,
-				"description":     user.Description,
-				"picture":         user.Picture,
+				"ID":          user.ID,
+				"name":        user.Name,
+				"email":       user.Email,
+				"description": user.Description,
+				"picture":     user.Picture,
 			})
 
 			return
@@ -171,11 +171,11 @@ func FacebookLoginOrSignUp(ctx iris.Context) {
 
 		if user.SocialLogin == true && user.SocialProvider == "Facebook" {
 			ctx.JSON(iris.Map{
-				"ID":              user.ID,
-				"name":       		 user.Name,
-				"email":           user.Email,
-				"description":     user.Description,
-				"picture":         user.Picture,
+				"ID":          user.ID,
+				"name":        user.Name,
+				"email":       user.Email,
+				"description": user.Description,
+				"picture":     user.Picture,
 			})
 
 			return
@@ -230,21 +230,21 @@ func GoogleLoginOrSignUp(ctx iris.Context) {
 
 		if userExists == false {
 			user = models.User{
-				Name:  					googleBody.GivenName + " " + googleBody.FamilyName, 
-				Email: 					googleBody.Email, 
-				Description: 		"",
-				Picture: 				"https://dio-planner.s3.us-east-2.amazonaws.com/no-image.jpg",
-				SocialLogin: 		true, 
+				Name:           googleBody.GivenName + " " + googleBody.FamilyName,
+				Email:          googleBody.Email,
+				Description:    "",
+				Picture:        "https://dio-planner.s3.us-east-2.amazonaws.com/no-image.jpg",
+				SocialLogin:    true,
 				SocialProvider: "Google",
 			}
 			storage.DB.Create(&user)
 
 			ctx.JSON(iris.Map{
-				"ID":              user.ID,
-				"name":       		 user.Name,
-				"email":           user.Email,
-				"description":     user.Description,
-				"picture":         user.Picture,
+				"ID":          user.ID,
+				"name":        user.Name,
+				"email":       user.Email,
+				"description": user.Description,
+				"picture":     user.Picture,
 			})
 
 			return
@@ -252,18 +252,18 @@ func GoogleLoginOrSignUp(ctx iris.Context) {
 
 		if user.SocialLogin == true && user.SocialProvider == "Google" {
 			ctx.JSON(iris.Map{
-				"ID":              user.ID,
-				"name":       		 user.Name,
-				"email":           user.Email,
-				"description":     user.Description,
-				"picture":         user.Picture,
+				"ID":          user.ID,
+				"name":        user.Name,
+				"email":       user.Email,
+				"description": user.Description,
+				"picture":     user.Picture,
 			})
 
 			return
 		}
 
 		utils.CreateEmailAlreadyRegistered(ctx)
-		
+
 		return
 	}
 }
@@ -316,31 +316,31 @@ func AppleLoginOrSignUp(ctx iris.Context) {
 
 		if userExists == false {
 			user = models.User{
-				Name: "", 
-				Email: email, 
-				SocialLogin: true, 
+				Name:           "",
+				Email:          email,
+				SocialLogin:    true,
 				SocialProvider: "Apple",
 			}
 			storage.DB.Create(&user)
 
 			ctx.JSON(iris.Map{
-				"ID":              user.ID,
-				"name":       		 user.Name,
-				"email":           user.Email,
-				"description":     user.Description,
-				"picture":         user.Picture,
+				"ID":          user.ID,
+				"name":        user.Name,
+				"email":       user.Email,
+				"description": user.Description,
+				"picture":     user.Picture,
 			})
-			
+
 			return
 		}
 
 		if user.SocialLogin == true && user.SocialProvider == "Apple" {
 			ctx.JSON(iris.Map{
-				"ID":              user.ID,
-				"name":       		 user.Name,
-				"email":           user.Email,
-				"description":     user.Description,
-				"picture":         user.Picture,
+				"ID":          user.ID,
+				"name":        user.Name,
+				"email":       user.Email,
+				"description": user.Description,
+				"picture":     user.Picture,
 			})
 
 			return
@@ -352,6 +352,39 @@ func AppleLoginOrSignUp(ctx iris.Context) {
 	}
 }
 
+// Get the information of an user
+func GetUser(ctx iris.Context) {
+	params := ctx.Params()
+	userID := params.Get("user_id")
+
+	var user models.User
+	userExists := storage.DB.
+		Where("id = ?", userID).
+		Find(&user)
+
+	if userExists.Error != nil {
+		utils.CreateInternalServerError(ctx)
+		return
+	}
+
+	if userExists.RowsAffected == 0 {
+		utils.CreateError(
+			iris.StatusNotFound,
+			"Not Found",
+			"User not found",
+			ctx,
+		)
+		return
+	}
+
+	ctx.JSON(iris.Map{
+		"name":        user.Name,
+		"description": user.Description,
+		"email":       user.Email,
+		"picture":     user.Picture,
+	})
+}
+
 // Update the information of an user
 func UpdateUser(ctx iris.Context) {
 	params := ctx.Params()
@@ -361,12 +394,6 @@ func UpdateUser(ctx iris.Context) {
 	err := ctx.ReadJSON(&userUpdateInput)
 	if err != nil {
 		utils.HandleValidationErrors(err, ctx)
-		return
-	}
-
-	hashedPassword, hashErr := hashAndSaltPassword(userUpdateInput.Password)
-	if hashErr != nil {
-		utils.CreateInternalServerError(ctx)
 		return
 	}
 
@@ -382,19 +409,18 @@ func UpdateUser(ctx iris.Context) {
 
 	if userExists.RowsAffected == 0 {
 		utils.CreateError(
-			iris.StatusNotFound, 
-			"Not Found", 
-			"User not found", 
+			iris.StatusNotFound,
+			"Not Found",
+			"User not found",
 			ctx,
 		)
 		return
 	}
 
-	userUpdate := types.UserUpdate {
-		Name: userUpdateInput.Name,
-		Password: hashedPassword,
+	userUpdate := types.UserUpdate{
+		Name:        userUpdateInput.Name,
 		Description: userUpdateInput.Description,
-		Picture: userUpdateInput.Picture,
+		Picture:     userUpdateInput.Picture,
 	}
 
 	rowsUpdated := storage.DB.

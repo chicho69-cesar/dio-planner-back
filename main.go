@@ -80,6 +80,7 @@ func main() {
 		user.Post("/facebook", routes.FacebookLoginOrSignUp)
 		user.Post("/google", routes.GoogleLoginOrSignUp)
 		user.Post("/apple", routes.AppleLoginOrSignUp)
+		user.Get("/get-user/{user_id}", routes.GetUser)
 		user.Patch("/update/{user_id}", routes.UpdateUser)
 	}
 
