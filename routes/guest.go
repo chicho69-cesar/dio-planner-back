@@ -322,8 +322,8 @@ func GetMyEvents(ctx iris.Context) {
 			events.id, events.name, events.date, events.description, 
 			events.img, events.location, events.topic, events.user_id 
 		FROM guests, events 
-		WHERE (events.user_id = $1) 
-			OR (guests.user_id = $2 AND guests.status = $3) 
+		WHERE 
+			((events.user_id = $1) OR (guests.user_id = $2 AND guests.status = $3)) 
 			AND (guests.event_id = events.id)
 	`
 
