@@ -20,7 +20,7 @@ func AddGuest(ctx iris.Context) {
 
 	var guest types.GuestResponse
 
-	query := `
+	query := /* sql */`
 		INSERT INTO guests (user_id, event_id, status)
 		VALUES ($1, $2, $3)
 		RETURNING id, user_id, event_id, status;
@@ -52,7 +52,7 @@ func SearchGuests(ctx iris.Context) {
 
 	var guests []types.UserOutput
 
-	query := `
+	query := /* sql */`
 		SELECT id, name, description, picture
 		FROM users
 		WHERE name LIKE $1
@@ -115,7 +115,7 @@ func GetGuests(ctx iris.Context) {
 
 	var guests []types.GuestsOutput
 
-	query := `
+	query := /* sql */`
 		SELECT guests.id, name, description, picture, status 
 		FROM guests, users 
 		WHERE event_id = $1 AND user_id=users.id
@@ -177,7 +177,7 @@ func GetInvitations(ctx iris.Context) {
 	var invitations []types.InvitationsOutput
 
 	actualStatus := "Pendiente"
-	query := `
+	query := /* sql */`
 		SELECT guests.id, name, date, description, img 
 		FROM guests, events 
 		WHERE guests.user_id = $1 AND guests.event_id = events.id AND status= $2
@@ -236,7 +236,7 @@ func AcceptInvitation(ctx iris.Context) {
 		)
 	}
 
-	query := `
+	query := /* sql */`
 		UPDATE guests
 		SET status = 'Aceptada'
 		WHERE id = $1
@@ -275,7 +275,7 @@ func DeclineInvitation(ctx iris.Context) {
 		)
 	}
 
-	query := `
+	query := /* sql */`
 		UPDATE guests
 		SET status = 'Cancelada'
 		WHERE id = $1
@@ -317,7 +317,7 @@ func GetMyEvents(ctx iris.Context) {
 	var events []types.EventOutput
 
 	actualStatus := "Aceptada"
-	query := `
+	query := /* sql */`
 		SELECT DISTINCT ON (events.id)
 			events.id, events.name, events.date, events.description, 
 			events.img, events.location, events.topic, events.user_id 

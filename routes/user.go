@@ -437,7 +437,6 @@ func UpdateUser(ctx iris.Context) {
 	})
 }
 
-/* ***** NOTE: Funciones para funcionalidades extras ***** */
 func getAndHandleUserExists(user *models.User, email string) (exists bool, err error) {
 	userExistsQuery := storage.DB.Where("email = ?", strings.ToLower(email)).Limit(1).Find(&user)
 

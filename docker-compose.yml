@@ -1,0 +1,18 @@
+services:
+  db:
+    image: postgres:15.3
+    container_name: dio-planner
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: dio-planner-db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./dio-planner-data:/var/lib/postgresql/data
+    networks:
+      - dio_planner_network
+
+networks:
+  dio_planner_network:
+    driver: bridge

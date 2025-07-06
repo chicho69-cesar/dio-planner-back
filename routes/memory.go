@@ -41,7 +41,7 @@ func GetMemories(ctx iris.Context) {
 
 	var memories []types.MemoryOutput
 
-	query := `
+	query := /* sql */`
 		SELECT id, title, picture, event_id
 		FROM memories
 		WHERE event_id = $1
@@ -111,7 +111,7 @@ func GetAllMemories(ctx iris.Context) {
 
 	var memories []types.MemoryOutput
 
-	query := `
+	query := /* sql */`
 		SELECT id, title, picture, event_id
 		FROM memories
 		WHERE event_id = $1
@@ -168,7 +168,7 @@ func ShareMemory(ctx iris.Context) {
 
 	var memory types.MemoryOutput
 
-	query := `
+	query := /* sql */`
 		INSERT INTO memories (title, picture, event_id)
 		VALUES ($1, $2, $3)
 		RETURNING id, title, picture, event_id

@@ -20,7 +20,7 @@ func CreateEvent(ctx iris.Context) {
 
 	var event types.EventOutput
 
-	query := `
+	query := /* sql */`
 		INSERT INTO events (name, date, description, img, location, topic, accessibility, user_id) 
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 		RETURNING id, name, date, description, img, location, topic, user_id
@@ -56,7 +56,7 @@ func GetEventByID(ctx iris.Context) {
 
 	var event types.EventOutput
 
-	query := `
+	query := /* sql */`
 		SELECT id, name, date, description, img, location, topic, user_id
 		FROM events WHERE id = $1
 	`
@@ -99,7 +99,7 @@ func GetEvents(ctx iris.Context) {
 
 	var events []types.EventOutput
 
-	query := `
+	query := /* sql */`
 		SELECT id, name, date, description, img, location, topic, user_id
 		FROM events
 		LIMIT $1
@@ -143,7 +143,7 @@ func GetEvents(ctx iris.Context) {
 func GetTopEvents(ctx iris.Context) {
 	var events []types.TopEventOutput
 
-	query := `
+	query := /* sql */`
 		SELECT AVG(grade), events.id, events.name, events.date, events.description, events.img, events.location, events.topic, events.user_id, events.accessibility
 		FROM grades, events 
 		WHERE grades.event_id = events.id AND events.accessibility = $1
@@ -213,7 +213,7 @@ func GetEventsByUser(ctx iris.Context) {
 
 	var events []types.EventOutput
 
-	query := `
+	query := /* sql */`
 		SELECT id, name, date, description, img, location, topic, user_id
 		FROM events
 		WHERE user_id = $1
@@ -260,7 +260,7 @@ func GetEventsByQuery(ctx iris.Context) {
 
 	var events []types.SearchEventOutput
 
-	query := `
+	query := /* sql */`
 		SELECT id, name, date, description, img, location, topic, user_id, accessibility
 		FROM events
 		WHERE (name LIKE $1 OR location LIKE $2) AND accessibility = $3
@@ -334,7 +334,7 @@ func UpdateEvent(ctx iris.Context) {
 
 	var event types.EventOutput
 
-	query := `
+	query := /* sql */`
 		UPDATE events
 		SET name = $1, date = $2, description = $3, img = $4, location = $5, user_id = $6
 		WHERE id = $7
@@ -379,7 +379,7 @@ func DeleteEvent(ctx iris.Context) {
 		)
 	}
 
-	query := `
+	query := /* sql */`
 		DELETE FROM events
 		WHERE id = $1
 	`

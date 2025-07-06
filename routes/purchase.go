@@ -20,7 +20,7 @@ func AddPurchase(ctx iris.Context) {
 
 	var purchase types.PurchaseOutput
 
-	query := `
+	query := /* sql */`
 		INSERT INTO purchases (title, price, event_id)
 		VALUES ($1, $2, $3)
 		RETURNING id, title, price, event_id
@@ -64,7 +64,7 @@ func GetPurchases(ctx iris.Context) {
 
 	var purchases []types.PurchaseOutput
 
-	query := `
+	query := /* sql */`
 		SELECT id, title, price, event_id
 		FROM purchases
 		WHERE event_id = $1
@@ -132,7 +132,7 @@ func UpdatePurchase(ctx iris.Context) {
 
 	var purchase types.PurchaseOutput
 
-	query := `
+	query := /* sql */`
 		UPDATE purchases
 		SET title = $1, price = $2
 		WHERE id = $3
@@ -175,7 +175,7 @@ func DeletePurchase(ctx iris.Context) {
 		)
 	}
 
-	query := `
+	query := /* sql */`
 		DELETE FROM purchases
 		WHERE id = $1
 	`

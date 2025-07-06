@@ -20,7 +20,7 @@ func AddGrade(ctx iris.Context) {
 
 	var grade types.GradeOutput
 
-	query := `
+	query := /* sql */`
 		INSERT INTO grades (opinion, grade, event_id, user_id)
 		VALUES ($1, $2, $3, $4)
 		RETURNING id, opinion, grade, event_id, user_id
@@ -45,7 +45,7 @@ func AddGrade(ctx iris.Context) {
 		return
 	}
 
-	query = `
+	query = /* sql */`
 		SELECT name FROM users WHERE id = $1
 	`
 
@@ -74,7 +74,7 @@ func GetGrades(ctx iris.Context) {
 
 	var grades []types.GradeOutput
 
-	query := `
+	query := /* sql */`
 		SELECT grades.id, opinion, grade, users.name, event_id, user_id
 		FROM grades, users
 		WHERE event_id = $1 AND users.id = user_id

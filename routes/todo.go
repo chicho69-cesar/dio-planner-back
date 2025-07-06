@@ -20,7 +20,7 @@ func AddTodo(ctx iris.Context) {
 
 	var todo types.TodoOutput
 
-	query := `
+	query := /* sql */`
 		INSERT INTO todos (text, date, complete, event_id)
 		VALUES ($1, $2, $3, $4)
 		RETURNING id, text, date, complete, event_id
@@ -66,7 +66,7 @@ func GetTodos(ctx iris.Context) {
 
 	var todos []types.TodoOutput
 
-	query := `
+	query := /* sql */`
 		SELECT id, text, date, complete, event_id
 		FROM todos
 		WHERE event_id = $1
@@ -135,7 +135,7 @@ func UpdateTodo(ctx iris.Context) {
 
 	var todo types.TodoOutput
 
-	query := `
+	query := /* sql */`
 		UPDATE todos
 		SET text = $1, date = $2, complete = $3
 		WHERE id = $4
@@ -180,7 +180,7 @@ func DeleteTodo(ctx iris.Context) {
 		)
 	}
 
-	query := `
+	query := /* sql */`
 		DELETE FROM todos
 		WHERE id = $1
 	`

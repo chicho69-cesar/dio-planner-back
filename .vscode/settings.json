@@ -9,6 +9,7 @@
 		"jwks",
 		"kataras",
 		"keyfunc",
-		"postgres"
+		"postgres",
+		"postgresql"
 	]
 }
