@@ -19,8 +19,30 @@ Después instalas las dependencias del proyecto con el comando:
 go download
 ```
 
+Levantar base de datos con Docker:
+
+```bash
+docker compose up -d
+```
+
 Posteriormente ejecutas el proyecto, cuando es la primera vez Gorm ejecutara las migraciones correspondientes para crear las tablas en la base de datos.
 
 ```bash
 go run main.go
+```
+
+(Opcional) Si quieres compilar el proyecto a una imagen usando Docker puedes usar el siguiente comando:
+
+```bash
+docker build -t dio-planner:1.0.0 .
+```
+
+Para ejecutar el contenedor de la imagen compilada puedes usar el siguiente comando:
+
+```bash
+docker container run -dp 4000:4000 `  
+> --name dio-planner `
+> --network dio-planner-back_dio_planner_network `
+> --env-file .env `
+> dio-planner:1.0.0
 ```
